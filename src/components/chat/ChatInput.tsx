@@ -223,8 +223,17 @@ export function ChatInput({ currentQuestion, onSubmit, onSkip, disabled }: ChatI
             <div className="animate-fade-in max-h-[40vh] overflow-y-auto">
               <RadioGroup
                 value={selectedOption}
-                onValueChange={setSelectedOption}
-                className={`grid ${currentQuestion.options.length >= 3 ? "grid-cols-2" : "grid-cols-1"} gap-2 md:gap-3`}
+                onValueChange={(value) => {
+                  if (value === "skip") {
+                    onSkip();
+                  } else {
+                    setSelectedOption(value);
+                    onSubmit(value);
+                  }
+                }}
+                className={`grid ${
+                  currentQuestion.options.length >= 3 ? "grid-cols-2" : "grid-cols-1"
+                } gap-2 md:gap-3`}
                 disabled={disabled}
               >
                 {currentQuestion.options.map((option) => (
@@ -238,6 +247,14 @@ export function ChatInput({ currentQuestion, onSubmit, onSkip, disabled }: ChatI
                     </Label>
                   </div>
                 ))}
+                <div
+                  className="flex items-center space-x-2 rounded-lg border-2 border-transparent p-2 hover:border-primary/20 transition-colors"
+                >
+                  <RadioGroupItem value="skip" id="skip" className="border-2" />
+                  <Label htmlFor="skip" className="flex-1 cursor-pointer text-sm md:text-base line-clamp-2">
+                    スキップ
+                  </Label>
+                </div>
               </RadioGroup>
             </div>
           )}
@@ -280,22 +297,26 @@ export function ChatInput({ currentQuestion, onSubmit, onSkip, disabled }: ChatI
       </div>
 
       <div className="flex justify-end items-center gap-2 md:gap-4 pt-2 md:pt-4">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={onSkip}
-          className="px-4 md:px-6 py-4 md:py-5 text-sm md:text-base bg-white/80 hover:bg-secondary/90 transition-all duration-200 rounded-xl shadow-sm hover:shadow-md text-muted-foreground hover:text-foreground"
-          disabled={disabled}
-        >
-          スキップ
-        </Button>
-        <Button
-          type="submit"
-          className="px-6 md:px-8 py-4 md:py-5 text-sm md:text-base bg-primary hover:bg-primary/90 text-white shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 rounded-xl"
-          disabled={isSubmitDisabled}
-        >
-          回答を送信
-        </Button>
+        {currentQuestion.type !== QuestionType.SELECT && currentQuestion.type !== QuestionType.HYBRID && (
+          <>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onSkip}
+              className="px-4 md:px-6 py-4 md:py-5 text-sm md:text-base bg-white/80 hover:bg-secondary/90 transition-all duration-200 rounded-xl shadow-sm hover:shadow-md text-muted-foreground hover:text-foreground"
+              disabled={disabled}
+            >
+              スキップ
+            </Button>
+            <Button
+              type="submit"
+              className="px-6 md:px-8 py-4 md:py-5 text-sm md:text-base bg-primary hover:bg-primary/90 text-white shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 rounded-xl"
+              disabled={isSubmitDisabled}
+            >
+              回答を送信
+            </Button>
+          </>
+        )}
       </div>
     </form>
   );
