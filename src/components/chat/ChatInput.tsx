@@ -261,14 +261,24 @@ export function ChatInput({ currentQuestion, onSubmit, onSkip, disabled }: ChatI
 
         {currentQuestion.type === QuestionType.HYBRID && (
           <div className="animate-fade-in">
-            <Input
-              ref={inputRef}
-              value={textInput}
-              onChange={(e) => setTextInput(e.target.value)}
-              placeholder="その他の理由があればこちらに入力してください"
-              className="w-full h-11 md:h-12 text-base mt-3 md:mt-4 bg-white/50 backdrop-blur-sm border-2 focus:border-primary/50"
-              disabled={disabled}
-            />
+            <div className="flex gap-2">
+              <Input
+                ref={inputRef}
+                value={textInput}
+                onChange={(e) => setTextInput(e.target.value)}
+                placeholder="その他の理由があればこちらに入力してください"
+                className="flex-1 h-11 md:h-12 text-base bg-white/50 backdrop-blur-sm border-2 focus:border-primary/50"
+                disabled={disabled}
+              />
+              <Button
+                type="button"
+                onClick={() => onSubmit(textInput)}
+                className="h-11 md:h-12 px-4 md:px-6 text-sm md:text-base bg-primary hover:bg-primary/90 text-white shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 rounded-xl"
+                disabled={disabled || !textInput.trim()}
+              >
+                送信
+              </Button>
+            </div>
           </div>
         )}
 
