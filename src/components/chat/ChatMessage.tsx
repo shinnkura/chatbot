@@ -3,22 +3,38 @@
  * @file チャットメッセージを表示するコンポーネント
  */
 
+"use client";
+
 import { ChatMessage as ChatMessageType } from "../../types/chat";
 import { cn } from "../../lib/utils";
+import { useScrollVisibility } from "../../hooks/useScrollVisibility";
+import { useEffect } from "react";
 
 interface ChatMessageProps {
   /** メッセージデータ */
   message: ChatMessageType;
+  /** 入力フォームの表示状態を制御する関数 */
+  onScrollVisibilityChange?: (isVisible: boolean) => void;
 }
 
 /**
  * チャットメッセージを表示するコンポーネント
  */
-export function ChatMessage({ message }: ChatMessageProps) {
+export function ChatMessage({ message, onScrollVisibilityChange }: ChatMessageProps) {
   const isBot = message.sender === "bot";
+  const [isVisible, ref] = useScrollVisibility({
+    threshold: 50,
+    direction: "down",
+    initialVisible: true,
+  });
+
+  // スクロールの可視性が変更されたときに親コンポーネントに通知
+  useEffect(() => {
+    onScrollVisibilityChange?.(isVisible);
+  }, [isVisible, onScrollVisibilityChange]);
 
   return (
-    <div className={cn("flex w-full gap-2 md:gap-4", isBot ? "justify-start" : "justify-end")}>
+    <div ref={ref} className={cn("flex w-full gap-2 md:gap-4", isBot ? "justify-start" : "justify-end")}>
       {isBot && (
         <div className="flex-shrink-0 w-8 h-8 md:w-10 md:h-10 rounded-full bg-primary/10 flex items-center justify-center">
           <span className="text-primary text-base md:text-lg font-bold">🤖</span>

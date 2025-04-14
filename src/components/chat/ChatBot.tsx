@@ -11,6 +11,8 @@ import { ChatMessage as ChatMessageType, ChatState, QuestionType } from "../../t
 import { questions } from "../../data/questions";
 import { ChatMessage } from "./ChatMessage";
 import { ChatInput } from "./ChatInput";
+import { cn } from "../../lib/utils";
+import { useScrollVisibility } from "../../hooks/useScrollVisibility";
 
 const INITIAL_MESSAGE: ChatMessageType = {
   id: "initial",
@@ -56,13 +58,23 @@ export function ChatBot() {
     answers: {},
   });
   const [isProcessing, setIsProcessing] = useState(false);
-
-  const chatContainerRef = useRef<HTMLDivElement>(null);
   const [isClient, setIsClient] = useState(false);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+  const [isInputVisible, scrollRef] = useScrollVisibility({
+    threshold: 5,
+    direction: "down",
+    initialVisible: true,
+  });
 
   useEffect(() => {
     setIsClient(true);
   }, []);
+
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
+  }, [state.messages]);
 
   /**
    * 新しいメッセージを追加する
@@ -179,15 +191,6 @@ export function ChatBot() {
     }
   };
 
-  /**
-   * チャットが更新されたらスクロールを一番下に移動
-   */
-  useEffect(() => {
-    if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-    }
-  }, [state.messages]);
-
   if (!isClient) {
     return null;
   }
@@ -205,7 +208,15 @@ export function ChatBot() {
 
       <div className="flex-1 overflow-hidden bg-secondary/30 min-h-0">
         <div className="h-full max-w-4xl mx-auto px-2 md:px-4">
-          <div ref={chatContainerRef} className="h-full overflow-y-auto py-3 md:py-6 space-y-4 md:space-y-6">
+          <div
+            ref={(node) => {
+              chatContainerRef.current = node;
+              if (node) {
+                scrollRef.current = node;
+              }
+            }}
+            className="h-full overflow-y-auto py-3 md:py-6 space-y-4 md:space-y-6"
+          >
             {state.messages.map((message) => (
               <div key={message.id} className="animate-slide-in">
                 <ChatMessage message={message} />
@@ -215,7 +226,12 @@ export function ChatBot() {
         </div>
       </div>
 
-      <div className="border-t bg-background/50 backdrop-blur-sm shrink-0">
+      <div
+        className={cn(
+          "border-t bg-background/50 backdrop-blur-sm shrink-0 transition-transform duration-300",
+          isInputVisible ? "translate-y-0" : "translate-y-full"
+        )}
+      >
         <div className="max-w-4xl mx-auto">
           <ChatInput
             currentQuestion={
