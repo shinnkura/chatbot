@@ -132,8 +132,8 @@ export function ChatInput({ currentQuestion, onSubmit, onSkip, disabled }: ChatI
         !addressInput.street.trim()));
 
   return (
-    <form onSubmit={handleSubmit} className="p-4 space-y-6">
-      <div className="space-y-4">
+    <form onSubmit={handleSubmit} className="p-2 md:p-4 space-y-4 md:space-y-6">
+      <div className="space-y-3 md:space-y-4">
         {currentQuestion.type === QuestionType.TEXT && (
           <div className="animate-fade-in">
             <Input
@@ -141,16 +141,16 @@ export function ChatInput({ currentQuestion, onSubmit, onSkip, disabled }: ChatI
               value={textInput}
               onChange={(e) => setTextInput(e.target.value)}
               placeholder="こちらに入力してください"
-              className="w-full bg-white/50 backdrop-blur-sm border-2 focus:border-primary/50"
+              className="w-full h-11 md:h-12 text-base bg-white/50 backdrop-blur-sm border-2 focus:border-primary/50"
               disabled={disabled}
             />
           </div>
         )}
 
         {currentQuestion.type === QuestionType.ADDRESS && (
-          <div className="animate-fade-in space-y-4">
+          <div className="animate-fade-in space-y-3 md:space-y-4">
             <div>
-              <Label htmlFor="postalCode" className="text-sm font-medium mb-1.5 block">
+              <Label htmlFor="postalCode" className="text-sm font-medium mb-1 md:mb-1.5 block">
                 郵便番号
               </Label>
               <Input
@@ -159,7 +159,7 @@ export function ChatInput({ currentQuestion, onSubmit, onSkip, disabled }: ChatI
                 value={addressInput.postalCode}
                 onChange={(e) => setAddressInput((prev) => ({ ...prev, postalCode: e.target.value }))}
                 placeholder="例：123-4567"
-                className="w-full bg-white/50 backdrop-blur-sm border-2 focus:border-primary/50"
+                className="w-full h-11 md:h-12 text-base bg-white/50 backdrop-blur-sm border-2 focus:border-primary/50"
                 disabled={disabled}
               />
             </div>
@@ -220,82 +220,113 @@ export function ChatInput({ currentQuestion, onSubmit, onSkip, disabled }: ChatI
 
         {(currentQuestion.type === QuestionType.SELECT || currentQuestion.type === QuestionType.HYBRID) &&
           currentQuestion.options && (
-            <div className="animate-fade-in">
+            <div className="animate-fade-in max-h-[40vh] overflow-y-auto">
               <RadioGroup
                 value={selectedOption}
-                onValueChange={setSelectedOption}
-                className="space-y-3"
+                onValueChange={(value) => {
+                  if (value === "skip") {
+                    onSkip();
+                  } else {
+                    setSelectedOption(value);
+                    onSubmit(value);
+                  }
+                }}
+                className={`grid ${
+                  currentQuestion.options.length >= 3 ? "grid-cols-2" : "grid-cols-1"
+                } gap-2 md:gap-3`}
                 disabled={disabled}
               >
                 {currentQuestion.options.map((option) => (
                   <div
                     key={option.value}
-                    className="flex items-center space-x-3 rounded-lg border-2 border-transparent p-3 hover:border-primary/20 transition-colors"
+                    className="flex items-center space-x-2 rounded-lg border-2 border-transparent p-2 hover:border-primary/20 transition-colors"
                   >
                     <RadioGroupItem value={option.value} id={option.value} className="border-2" />
-                    <Label htmlFor={option.value} className="flex-1 cursor-pointer text-base">
+                    <Label htmlFor={option.value} className="flex-1 cursor-pointer text-sm md:text-base line-clamp-2">
                       {option.label}
                     </Label>
                   </div>
                 ))}
+                <div
+                  className="flex items-center space-x-2 rounded-lg border-2 border-transparent p-2 hover:border-primary/20 transition-colors"
+                >
+                  <RadioGroupItem value="skip" id="skip" className="border-2" />
+                  <Label htmlFor="skip" className="flex-1 cursor-pointer text-sm md:text-base line-clamp-2">
+                    スキップ
+                  </Label>
+                </div>
               </RadioGroup>
             </div>
           )}
 
         {currentQuestion.type === QuestionType.HYBRID && (
           <div className="animate-fade-in">
-            <Input
-              ref={inputRef}
-              value={textInput}
-              onChange={(e) => setTextInput(e.target.value)}
-              placeholder="その他の理由があればこちらに入力してください"
-              className="w-full mt-4 bg-white/50 backdrop-blur-sm border-2 focus:border-primary/50"
-              disabled={disabled}
-            />
+            <div className="flex gap-2">
+              <Input
+                ref={inputRef}
+                value={textInput}
+                onChange={(e) => setTextInput(e.target.value)}
+                placeholder="その他の理由があればこちらに入力してください"
+                className="flex-1 h-11 md:h-12 text-base bg-white/50 backdrop-blur-sm border-2 focus:border-primary/50"
+                disabled={disabled}
+              />
+              <Button
+                type="button"
+                onClick={() => onSubmit(textInput)}
+                className="h-11 md:h-12 px-4 md:px-6 text-sm md:text-base bg-primary hover:bg-primary/90 text-white shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 rounded-xl"
+                disabled={disabled || !textInput.trim()}
+              >
+                送信
+              </Button>
+            </div>
           </div>
         )}
 
         {currentQuestion.type === QuestionType.PERCENTAGE && (
-          <div className="animate-fade-in space-y-6">
-            <div className="space-y-4 p-4 bg-white/50 backdrop-blur-sm rounded-xl border-2">
+          <div className="animate-fade-in space-y-4 md:space-y-6">
+            <div className="space-y-4 p-3 md:p-4 bg-white/50 backdrop-blur-sm rounded-xl border-2">
               <div className="flex justify-between items-center">
-                <Label className="text-base">株式会社運営</Label>
-                <span className="text-lg font-bold text-primary">{percentageValue}%</span>
+                <Label className="text-sm md:text-base">株式会社運営</Label>
+                <span className="text-base md:text-lg font-bold text-primary">{percentageValue}%</span>
               </div>
               <Slider
                 value={[percentageValue]}
                 onValueChange={(value) => setPercentageValue(value[0])}
                 max={100}
                 step={1}
-                className="py-4"
+                className="py-3 md:py-4"
                 disabled={disabled}
               />
               <div className="flex justify-between items-center">
-                <Label className="text-base">社会福祉法人運営</Label>
-                <span className="text-lg font-bold text-primary">{100 - percentageValue}%</span>
+                <Label className="text-sm md:text-base">社会福祉法人運営</Label>
+                <span className="text-base md:text-lg font-bold text-primary">{100 - percentageValue}%</span>
               </div>
             </div>
           </div>
         )}
       </div>
 
-      <div className="flex justify-end items-center gap-4 pt-4">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={onSkip}
-          className="px-6 py-5 text-base bg-white/80 hover:bg-secondary/90 transition-all duration-200 rounded-xl shadow-sm hover:shadow-md text-muted-foreground hover:text-foreground"
-          disabled={disabled}
-        >
-          スキップ
-        </Button>
-        <Button
-          type="submit"
-          className="px-8 py-5 text-base bg-primary hover:bg-primary/90 text-white shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 rounded-xl"
-          disabled={isSubmitDisabled}
-        >
-          回答を送信
-        </Button>
+      <div className="flex justify-end items-center gap-2 md:gap-4 pt-2 md:pt-4">
+        {currentQuestion.type !== QuestionType.SELECT && currentQuestion.type !== QuestionType.HYBRID && (
+          <>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onSkip}
+              className="px-4 md:px-6 py-4 md:py-5 text-sm md:text-base bg-white/80 hover:bg-secondary/90 transition-all duration-200 rounded-xl shadow-sm hover:shadow-md text-muted-foreground hover:text-foreground"
+              disabled={disabled}
+            >
+              スキップ
+            </Button>
+            <Button
+              type="submit"
+              className="px-6 md:px-8 py-4 md:py-5 text-sm md:text-base bg-primary hover:bg-primary/90 text-white shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 rounded-xl"
+              disabled={isSubmitDisabled}
+            >
+              回答を送信
+            </Button>
+          </>
+        )}
       </div>
     </form>
   );

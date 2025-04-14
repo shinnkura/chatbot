@@ -1,6 +1,7 @@
 /**
  * チャットボットコンポーネント
  * @file チャットボットのメインコンポーネント
+ * @description レスポンシブ対応のチャットインターフェース
  */
 
 "use client";
@@ -14,7 +15,7 @@ import { ChatInput } from "./ChatInput";
 const INITIAL_MESSAGE: ChatMessageType = {
   id: "initial",
   sender: "bot",
-  content: "こんにちは！保育士様の転職相談を承ります。以下の質問にお答えいただけますでしょうか？",
+  content: "こんにちは！保育士様の転職相談を承ります。転職時期はどれくらいを目指しているのですか？",
 };
 
 /**
@@ -34,7 +35,7 @@ function sleep(ms: number) {
 /**
  * 回答に対する応答メッセージを生成する
  */
-function generateResponseMessage(questionType: string): string {
+function generateResponseMessage(): string {
   const responses = [
     "ご回答ありがとうございます。",
     "承知いたしました。",
@@ -112,7 +113,7 @@ export function ChatBot() {
     addMessage({
       id: generateMessageId("response"),
       sender: "bot",
-      content: generateResponseMessage(currentQuestion.type),
+      content: generateResponseMessage(),
     });
 
     // 次の質問へ進む
@@ -127,8 +128,6 @@ export function ChatBot() {
   const handleSkip = async () => {
     if (isProcessing) return;
     setIsProcessing(true);
-
-    const currentQuestion = questions[state.currentQuestionIndex];
 
     addMessage({
       id: generateMessageId("skip"),
@@ -194,17 +193,19 @@ export function ChatBot() {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-background">
-      <div className="bg-primary text-white p-6 shadow-lg">
+    <div className="flex flex-col h-[100dvh] bg-background">
+      <div className="bg-primary text-white p-4 md:p-6 shadow-lg shrink-0">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-2xl font-bold">保育士転職相談</h1>
-          <p className="text-sm mt-2 text-primary-foreground/90">あなたに合った保育園をご紹介させていただきます</p>
+          <h1 className="text-xl md:text-2xl font-bold">保育士転職相談</h1>
+          <p className="text-xs md:text-sm mt-1 md:mt-2 text-primary-foreground/90">
+            あなたに合った保育園をご紹介させていただきます
+          </p>
         </div>
       </div>
 
-      <div className="flex-1 overflow-hidden bg-secondary/30">
-        <div className="h-full max-w-4xl mx-auto px-4">
-          <div ref={chatContainerRef} className="h-full overflow-y-auto py-6 space-y-6">
+      <div className="flex-1 overflow-hidden bg-secondary/30 min-h-0">
+        <div className="h-full max-w-4xl mx-auto px-2 md:px-4">
+          <div ref={chatContainerRef} className="h-full overflow-y-auto py-3 md:py-6 space-y-4 md:space-y-6">
             {state.messages.map((message) => (
               <div key={message.id} className="animate-slide-in">
                 <ChatMessage message={message} />
@@ -214,7 +215,7 @@ export function ChatBot() {
         </div>
       </div>
 
-      <div className="border-t bg-background/50 backdrop-blur-sm">
+      <div className="border-t bg-background/50 backdrop-blur-sm shrink-0">
         <div className="max-w-4xl mx-auto">
           <ChatInput
             currentQuestion={
