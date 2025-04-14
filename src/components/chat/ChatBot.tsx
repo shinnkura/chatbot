@@ -61,7 +61,7 @@ export function ChatBot() {
   const [isClient, setIsClient] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const [isInputVisible, scrollRef] = useScrollVisibility({
-    threshold: 5,
+    threshold: 1,
     direction: "down",
     initialVisible: true,
   });
@@ -229,7 +229,7 @@ export function ChatBot() {
       <div
         className={cn(
           "border-t bg-background/50 backdrop-blur-sm shrink-0 transition-transform duration-300",
-          isInputVisible ? "translate-y-0" : "translate-y-full"
+          isInputVisible ? "translate-y-0" : "hidden"
         )}
       >
         <div className="max-w-4xl mx-auto">
