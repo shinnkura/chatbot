@@ -15,7 +15,7 @@ import { ChatInput } from "./ChatInput";
 const INITIAL_MESSAGE: ChatMessageType = {
   id: "initial",
   sender: "bot",
-  content: "こんにちは！保育士様の転職相談を承ります。以下の質問にお答えいただけますでしょうか？",
+  content: "こんにちは！保育士様の転職相談を承ります。転職時期はどれくらいを目指しているのですか？",
 };
 
 /**

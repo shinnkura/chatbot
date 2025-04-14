@@ -220,20 +220,20 @@ export function ChatInput({ currentQuestion, onSubmit, onSkip, disabled }: ChatI
 
         {(currentQuestion.type === QuestionType.SELECT || currentQuestion.type === QuestionType.HYBRID) &&
           currentQuestion.options && (
-            <div className="animate-fade-in">
+            <div className="animate-fade-in max-h-[40vh] overflow-y-auto">
               <RadioGroup
                 value={selectedOption}
                 onValueChange={setSelectedOption}
-                className="space-y-2 md:space-y-3"
+                className={`grid ${currentQuestion.options.length >= 3 ? "grid-cols-2" : "grid-cols-1"} gap-2 md:gap-3`}
                 disabled={disabled}
               >
                 {currentQuestion.options.map((option) => (
                   <div
                     key={option.value}
-                    className="flex items-center space-x-3 rounded-lg border-2 border-transparent p-2.5 md:p-3 hover:border-primary/20 transition-colors"
+                    className="flex items-center space-x-2 rounded-lg border-2 border-transparent p-2 hover:border-primary/20 transition-colors"
                   >
                     <RadioGroupItem value={option.value} id={option.value} className="border-2" />
-                    <Label htmlFor={option.value} className="flex-1 cursor-pointer text-sm md:text-base">
+                    <Label htmlFor={option.value} className="flex-1 cursor-pointer text-sm md:text-base line-clamp-2">
                       {option.label}
                     </Label>
                   </div>
