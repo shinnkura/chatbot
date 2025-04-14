@@ -32,7 +32,9 @@ export function ChatMessage({ message }: ChatMessageProps) {
       >
         <div className="relative z-10">
           <p className="text-sm md:text-base leading-relaxed whitespace-pre-wrap">{message.content}</p>
-          {message.description && <p className="text-xs md:text-sm mt-1.5 md:mt-2 opacity-80">{message.description}</p>}
+          {message.question && (
+            <p className="text-xs md:text-sm mt-1.5 md:mt-2 opacity-80">{message.question.description}</p>
+          )}
         </div>
         <div
           className={cn(
