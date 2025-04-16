@@ -1,16 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 
 interface UseScrollVisibilityOptions {
-  /** スクロールの閾値（ピクセル） */
-  threshold?: number;
-  /** スクロール方向（上/下） */
-  direction?: "up" | "down";
-  /** 初期表示状態 */
-  initialVisible?: boolean;
+  threshold?: number; // スクロールの閾値（ピクセル）
+  direction?: "up" | "down"; // スクロール方向（上/下）
+  initialVisible?: boolean; // 初期表示状態
 }
 
 export function useScrollVisibility({
-  threshold = 50,
+  threshold = 0.1,
   direction = "down",
   initialVisible = true,
 }: UseScrollVisibilityOptions = {}) {
@@ -28,12 +25,10 @@ export function useScrollVisibility({
 
       if (direction === "down") {
         // 下方向スクロール時の表示制御
-        const isAtBottom = scrollHeight - scrollTop - clientHeight < threshold;
-        setIsVisible(isAtBottom);
+        setIsVisible(scrollHeight - scrollTop - clientHeight < threshold);
       } else {
         // 上方向スクロール時の表示制御
-        const isScrollingUp = currentScrollY < lastScrollY.current;
-        setIsVisible(isScrollingUp);
+        setIsVisible(currentScrollY < lastScrollY.current);
       }
 
       lastScrollY.current = currentScrollY;

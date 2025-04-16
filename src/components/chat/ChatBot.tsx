@@ -1,9 +1,3 @@
-/**
- * チャットボットコンポーネント
- * @file チャットボットのメインコンポーネント
- * @description レスポンシブ対応のチャットインターフェース
- */
-
 "use client";
 
 import { useEffect, useRef, useState } from "react";
@@ -60,11 +54,7 @@ export function ChatBot() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
-  const [isInputVisible, scrollRef] = useScrollVisibility({
-    threshold: 1,
-    direction: "down",
-    initialVisible: true,
-  });
+  const [isInputVisible, scrollRef] = useScrollVisibility({});
 
   useEffect(() => {
     setIsClient(true);
@@ -207,12 +197,14 @@ export function ChatBot() {
       </div>
 
       <div className="flex-1 overflow-hidden bg-secondary/30 min-h-0">
-        <div className="h-full max-w-4xl mx-auto px-2 md:px-4">
+        <div className="h-[150px] max-w-4xl mx-auto px-2 md:px-4">
           <div
             ref={(node) => {
               chatContainerRef.current = node;
               if (node) {
                 scrollRef.current = node;
+                console.log("node: ", node);
+                console.log("scrollRef: ", scrollRef.current);
               }
             }}
             className="h-full overflow-y-auto py-3 md:py-6 space-y-4 md:space-y-6"
