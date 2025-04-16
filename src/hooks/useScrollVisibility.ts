@@ -1,8 +1,3 @@
-/**
- * スクロールに基づく表示/非表示を制御するカスタムフック
- * @file スクロール位置に応じて要素の表示/非表示を制御するフック
- */
-
 import { useState, useEffect, useRef } from "react";
 
 interface UseScrollVisibilityOptions {
@@ -14,11 +9,6 @@ interface UseScrollVisibilityOptions {
   initialVisible?: boolean;
 }
 
-/**
- * スクロールに基づく表示/非表示を制御するカスタムフック
- * @param options - オプション設定
- * @returns [isVisible, ref] - 表示状態と参照
- */
 export function useScrollVisibility({
   threshold = 50,
   direction = "down",
