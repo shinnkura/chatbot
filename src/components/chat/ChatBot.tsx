@@ -54,8 +54,7 @@ export function ChatBot() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
-  const chatRef = useRef<HTMLDivElement>(null);
-  const scrollDirection = useElementScroll(chatRef);
+  const scrollDirection = useElementScroll(chatContainerRef);
 
   useEffect(() => {
     setIsClient(true);
@@ -199,16 +198,7 @@ export function ChatBot() {
 
       <div className="flex-1 overflow-hidden bg-secondary/30 min-h-0">
         <div className="h-full max-w-4xl mx-auto px-2 md:px-4">
-          <div
-            // ref={(node) => {
-            //   chatContainerRef.current = node;
-            //   if (node) {
-            //     chatRef.current = node;
-            //   }
-            // }}
-            ref={chatRef}
-            className="h-[150px] bg-black overflow-y-auto py-3 md:py-6 space-y-4 md:space-y-6"
-          >
+          <div ref={chatContainerRef} className="h-full overflow-y-auto py-3 md:py-6 space-y-4 md:space-y-6">
             {state.messages.map((message) => (
               <div key={message.id} className="animate-slide-in">
                 <ChatMessage message={message} />
@@ -221,7 +211,7 @@ export function ChatBot() {
       <div
         className={cn(
           "border-t bg-background/50 backdrop-blur-sm shrink-0 transition-transform duration-300",
-          (scrollDirection === "down") || (scrollDirection == null) ? "translate-y-0" : "hidden"
+          scrollDirection === "down" || scrollDirection == null ? "translate-y-0" : "hidden"
         )}
       >
         <div className="max-w-4xl mx-auto">
