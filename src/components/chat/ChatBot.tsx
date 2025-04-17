@@ -6,8 +6,7 @@ import { questions } from "../../data/questions";
 import { ChatMessage } from "./ChatMessage";
 import { ChatInput } from "./ChatInput";
 import { cn } from "../../lib/utils";
-import { useElementScroll } from "../../hooks/useElementScroll";
-
+import { useScrollVisibility } from "../../hooks/useScrollVisibility";
 const INITIAL_MESSAGE: ChatMessageType = {
   id: "initial",
   sender: "bot",
@@ -54,7 +53,7 @@ export function ChatBot() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
-  const scrollDirection = useElementScroll(chatContainerRef);
+  const scrollDirection = useScrollVisibility(chatContainerRef);
 
   useEffect(() => {
     setIsClient(true);

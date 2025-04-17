@@ -1,52 +1,27 @@
-import { RefObject, useEffect, useState, useSyncExternalStore } from "react";
+import { RefObject, useEffect, useRef, useState } from "react";
 
-// カスタムストア：ウィンドウ高さ
-const getWindowHeight = () => window.innerHeight;
-const subscribeHeightChange = (callback: () => void) => {
-  window.addEventListener("resize", callback);
-  return () => window.removeEventListener("resize", callback);
-};
-const useWindowHeight = () => useSyncExternalStore(subscribeHeightChange, getWindowHeight);
-
-const useScrollVisibility = (ref: RefObject<HTMLElement | null>) => {
-  const windowHeight = useWindowHeight();
-  const [scrollPosition, setScrollPosition] = useState(0);
-  const [prevScrollPosition, setPrevScrollPosition] = useState(0);
-  const [refHeight, setRefHeight] = useState(0);
-  const [scrollDirection, setScrollDirection] = useState<"up" | "down" | null>(null);
+export const useScrollVisibility = (ref: RefObject<HTMLElement | null>) => {
+  const [direction, setDirection] = useState<"up" | "down" | null>(null);
+  const prevY = useRef(0);
 
   useEffect(() => {
-    const updateMetrics = () => {
-      if (ref.current) {
-        const { top, height } = ref.current.getBoundingClientRect();
-        setPrevScrollPosition(scrollPosition);
-        setScrollPosition(top);
-        setRefHeight(height);
+    const el = ref.current;
+    if (!el) return;
 
-        // スクロール方向の判定
-        if (top < prevScrollPosition) {
-          setScrollDirection("up");
-          console.log("scrollDirection: ", scrollDirection);
-        } else if (top > prevScrollPosition) {
-          setScrollDirection("down");
-          console.log("scrollDirection: ", scrollDirection);
-        }
-      }
+    const onScroll = () => {
+      const y = el.scrollTop;
+      const prev = prevY.current;
+
+      if (y > prev) setDirection("down");
+      else if (y < prev) setDirection("up");
+
+      prevY.current = y; // 常に最新値を保持
     };
 
-    updateMetrics();
-    window.addEventListener("scroll", updateMetrics);
-    window.addEventListener("resize", updateMetrics);
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => el.removeEventListener("scroll", onScroll);
+  }, [ref.current]);
+  console.log("direction: ", direction);
 
-    return () => {
-      window.removeEventListener("scroll", updateMetrics);
-      window.removeEventListener("resize", updateMetrics);
-    };
-  }, [ref, scrollPosition, prevScrollPosition, scrollDirection]);
-
-  const rate = refHeight > 0 ? ((windowHeight - scrollPosition) / refHeight) * 100 : 0;
-  console.log("ref: ", ref);
-  return { scrollDirection, windowHeight, scrollPosition, refHeight, rate };
+  return direction;
 };
-
-export default useScrollVisibility;
