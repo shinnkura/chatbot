@@ -203,7 +203,7 @@ export function ChatBot() {
             // ref={(node) => {
             //   chatContainerRef.current = node;
             //   if (node) {
-            //     ref.current = node;
+            //     chatRef.current = node;
             //   }
             // }}
             ref={chatRef}
@@ -221,7 +221,7 @@ export function ChatBot() {
       <div
         className={cn(
           "border-t bg-background/50 backdrop-blur-sm shrink-0 transition-transform duration-300",
-          scrollDirection === "up" || scrollDirection === null ? "translate-y-0" : "hidden"
+          (scrollDirection === "down") || (scrollDirection == null) ? "translate-y-0" : "hidden"
         )}
       >
         <div className="max-w-4xl mx-auto">
