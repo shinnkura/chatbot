@@ -197,7 +197,13 @@ export function ChatBot() {
 
       <div className="flex-1 overflow-hidden bg-secondary/30 min-h-0">
         <div className="h-full max-w-4xl mx-auto px-2 md:px-4">
-          <div ref={chatContainerRef} className="h-full overflow-y-auto py-3 md:py-6 space-y-4 md:space-y-6">
+          <div
+            ref={chatContainerRef}
+            className={cn(
+              "h-full overflow-y-auto py-3 md:py-6 space-y-4 md:space-y-6",
+              scrollDirection === "down" || scrollDirection == null ? "" : "pb-[500px]"
+            )}
+          >
             {state.messages.map((message) => (
               <div key={message.id} className="animate-slide-in">
                 <ChatMessage message={message} />
