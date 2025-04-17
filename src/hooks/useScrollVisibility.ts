@@ -1,39 +1,38 @@
 import { RefObject, useEffect, useRef, useState } from "react";
 
-export const useScrollVisibility = (ref: RefObject<HTMLElement | null>) => {
-  const [direction, setDirection] = useState<"up" | "down" | null>(null);
+interface Options {
+  threshold?: number;
+}
+
+export function useScrollVisibility(targetRef: RefObject<HTMLElement | null>, { threshold = 5 }: Options = {}) {
+  const [dir, setDir] = useState<"up" | "down" | null>(null);
   const prevY = useRef(0);
 
   useEffect(() => {
-    const el = ref.current;
+    const el = targetRef.current;
     if (!el) return;
 
-    const onScroll = () => {
+    const update = () => {
       const y = el.scrollTop;
-      const max = el.scrollHeight - el.clientHeight;
       const diff = y - prevY.current;
-
-      // ① 変化が無い／きわめて小さいなら無視
-      if (diff === 0) return;
-
-      // ② 先頭 or 末尾で「境界の外向き」へ動いたときは無視（オーバースクロールの防止）
-      if (
-        (y === 0 && diff < 0) || // 上端でさらに上
-        (y === max && diff > 0)
-      ) {
-        // 下端でさらに下
-        prevY.current = y;
-        return;
-      }
-
-      // ③ 通常判定
-      setDirection(diff > 0 ? "down" : "up");
+      if (Math.abs(diff) < threshold) return; // 微小変化を除外
+      setDir(diff > 0 ? "down" : "up");
       prevY.current = y;
     };
 
-    el.addEventListener("scroll", onScroll, { passive: true });
-    return () => el.removeEventListener("scroll", onScroll);
-  }, [ref]);
+    // Safari 対策：touchmove / wheel でも毎フレーム更新
+    const onScroll = () => requestAnimationFrame(update);
 
-  return direction;
-};
+    el.addEventListener("scroll", onScroll, { passive: true });
+    el.addEventListener("touchmove", onScroll, { passive: true }); // 慣性スクロール
+    el.addEventListener("wheel", onScroll, { passive: true }); // ホイール操作
+
+    return () => {
+      el.removeEventListener("scroll", onScroll);
+      el.removeEventListener("touchmove", onScroll);
+      el.removeEventListener("wheel", onScroll);
+    };
+  }, [targetRef, threshold]);
+
+  return dir;
+}
