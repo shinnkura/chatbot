@@ -200,7 +200,7 @@ export function ChatBot() {
           <div
             ref={chatContainerRef}
             className={cn(
-              "h-full overflow-y-auto py-3 md:py-6 space-y-4 md:space-y-6",
+              "h-full overflow-y-auto py-3 overscroll-contain md:py-6 space-y-4 md:space-y-6",
               scrollDirection === "down" || scrollDirection == null ? "" : "pb-[500px]"
             )}
           >
