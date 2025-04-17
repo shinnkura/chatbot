@@ -10,18 +10,30 @@ export const useScrollVisibility = (ref: RefObject<HTMLElement | null>) => {
 
     const onScroll = () => {
       const y = el.scrollTop;
-      const prev = prevY.current;
+      const max = el.scrollHeight - el.clientHeight;
+      const diff = y - prevY.current;
 
-      if (y > prev) setDirection("down");
-      else if (y < prev) setDirection("up");
+      // ① 変化が無い／きわめて小さいなら無視
+      if (diff === 0) return;
 
-      prevY.current = y; // 常に最新値を保持
+      // ② 先頭 or 末尾で「境界の外向き」へ動いたときは無視（オーバースクロールの防止）
+      if (
+        (y === 0 && diff < 0) || // 上端でさらに上
+        (y === max && diff > 0)
+      ) {
+        // 下端でさらに下
+        prevY.current = y;
+        return;
+      }
+
+      // ③ 通常判定
+      setDirection(diff > 0 ? "down" : "up");
+      prevY.current = y;
     };
 
     el.addEventListener("scroll", onScroll, { passive: true });
     return () => el.removeEventListener("scroll", onScroll);
-  }, [ref.current]);
-  console.log("direction: ", direction);
+  }, [ref]);
 
   return direction;
 };
