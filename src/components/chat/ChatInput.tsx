@@ -104,8 +104,8 @@ export function ChatInput({ currentQuestion, onSubmit, onSkip, disabled }: ChatI
         break;
       case QuestionType.ADDRESS:
         answer = [
-          `郵便番号: ${addressInput.postalCode}`,
-          `都道府県: ${addressInput.prefecture}`,
+          // `郵便番号: ${addressInput.postalCode}`,
+          // `都道府県: ${addressInput.prefecture}`,
           `市区町村: ${addressInput.city}`,
           `市区町村以下: ${addressInput.street}`,
           addressInput.other ? `その他: ${addressInput.other}` : "",
@@ -149,7 +149,7 @@ export function ChatInput({ currentQuestion, onSubmit, onSkip, disabled }: ChatI
 
         {currentQuestion.type === QuestionType.ADDRESS && (
           <div className="animate-fade-in space-y-3 md:space-y-4">
-            <div>
+            {/* <div>
               <Label htmlFor="postalCode" className="text-sm font-medium mb-1 md:mb-1.5 block">
                 郵便番号
               </Label>
@@ -175,7 +175,7 @@ export function ChatInput({ currentQuestion, onSubmit, onSkip, disabled }: ChatI
                 className="w-full bg-white/50 backdrop-blur-sm border-2 focus:border-primary/50"
                 disabled={disabled}
               />
-            </div>
+            </div> */}
             <div>
               <Label htmlFor="city" className="text-sm font-medium mb-1.5 block">
                 市区町村
@@ -231,9 +231,7 @@ export function ChatInput({ currentQuestion, onSubmit, onSkip, disabled }: ChatI
                     onSubmit(value);
                   }
                 }}
-                className={`grid ${
-                  currentQuestion.options.length >= 3 ? "grid-cols-2" : "grid-cols-1"
-                } gap-2 md:gap-3`}
+                className={`grid ${currentQuestion.options.length >= 3 ? "grid-cols-2" : "grid-cols-1"} gap-2 md:gap-3`}
                 disabled={disabled}
               >
                 {currentQuestion.options.map((option) => (
@@ -247,9 +245,7 @@ export function ChatInput({ currentQuestion, onSubmit, onSkip, disabled }: ChatI
                     </Label>
                   </div>
                 ))}
-                <div
-                  className="flex items-center space-x-2 rounded-lg border-2 border-transparent p-2 hover:border-primary/20 transition-colors"
-                >
+                <div className="flex items-center space-x-2 rounded-lg border-2 border-transparent p-2 hover:border-primary/20 transition-colors">
                   <RadioGroupItem value="skip" id="skip" className="border-2" />
                   <Label htmlFor="skip" className="flex-1 cursor-pointer text-sm md:text-base line-clamp-2">
                     スキップ
